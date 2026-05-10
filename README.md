@@ -59,29 +59,6 @@ git push origin 0.2.0
 
 GitHub Pages picks up `main` automatically once the workflow pushes here.
 
-### One-time setup (CI authentication)
-
-The release workflow needs write access to this repo. Use a Deploy Key:
-
-```bash
-# 1. Generate an SSH key pair (no passphrase)
-ssh-keygen -t ed25519 -C "family-mruby-installer-deploy" -f /tmp/installer_deploy_key -N ""
-
-# 2. Public key  -> family-mruby/family-mruby-installer
-#      Settings -> Deploy keys -> Add deploy key
-#      Title: "release-installer (family-mruby CI)"
-#      Key:   contents of /tmp/installer_deploy_key.pub
-#      [x] Allow write access
-
-# 3. Private key -> family-mruby/family-mruby
-#      Settings -> Secrets and variables -> Actions -> New repository secret
-#      Name:   INSTALLER_DEPLOY_KEY
-#      Secret: contents of /tmp/installer_deploy_key
-
-# 4. Delete the local copies once registered
-rm /tmp/installer_deploy_key /tmp/installer_deploy_key.pub
-```
-
 ### Manual fallback (no CI)
 
 If you need to ship without CI (e.g. while debugging the workflow):
@@ -124,10 +101,6 @@ ESP Web Tools needs explicit byte offsets per part. They mirror each repo's `bui
 | fmruby-graphics-audio | ESP32 | `0x1000` (4096) | `0x8000` (32768) | `0x10000` (65536) | `0x204000` (2113536) |
 
 If a future build changes partition layout or storage size, regenerate `manifest.json` (the staging script writes it from a template, so re-running it is enough).
-
-## Roadmap
-
-- **Serial console** — optional Web Serial monitor (similar to [R2P2-ESP32-installer](https://github.com/kishima/R2P2-ESP32-installer)) for post-flash boot log inspection.
 
 ## License
 
