@@ -38,55 +38,72 @@ family-mruby-installer/
 
 ## For maintainers
 
-### Publishing a new version
+### Publishing a new version (automated)
 
-1. Build both firmwares locally:
+The parent [`family-mruby/family-mruby`](https://github.com/family-mruby/family-mruby) repo has a `Release Firmware to Installer` workflow (`.github/workflows/release-installer.yml`) that does the entire release:
 
-   ```bash
-   # In fmruby-core
-   rake clean_all && rake build:esp32
+1. Builds `fmruby-core` and `fmruby-graphics-audio` from the refs pinned in `.repos`.
+2. Runs `scripts/stage-firmware.sh <tag>` in this repo via SSH.
+3. Updates `versions.json` (default + new entry).
+4. Commits and pushes to `main` here.
 
-   # In fmruby-graphics-audio
-   rake clean_all && rake build:esp32
-   ```
+Trigger: pushing a `MAJOR.MINOR.PATCH` tag to the parent repo, or running the workflow manually with a version input.
 
-2. From inside this repo, run the staging helper:
+```bash
+# In the parent family-mruby repo:
+# 1. Update .repos so each sub-repo's `version:` points to the ref you want to ship
+# 2. Commit and tag
+git tag 0.2.0
+git push origin 0.2.0
+```
 
-   ```bash
-   bash scripts/stage-firmware.sh 0.2.0
-   ```
+GitHub Pages picks up `main` automatically once the workflow pushes here.
 
-   It copies bootloader / partition-table / app / storage from each repo's `build/` directory into `firmware/0.2.0/<target>/` and writes the per-target `manifest.json`.
+### One-time setup (CI authentication)
 
-   Override source paths if your checkout layout differs:
+The release workflow needs write access to this repo. Use a Deploy Key:
 
-   ```bash
-   FMRUBY_CORE_BUILD=/path/to/fmruby-core/build \
-   FMRUBY_GFX_BUILD=/path/to/fmruby-graphics-audio/build \
-   bash scripts/stage-firmware.sh 0.2.0
-   ```
+```bash
+# 1. Generate an SSH key pair (no passphrase)
+ssh-keygen -t ed25519 -C "family-mruby-installer-deploy" -f /tmp/installer_deploy_key -N ""
 
-3. Edit `versions.json` to add the new entry at the top of the `versions` array and update `default`:
+# 2. Public key  -> family-mruby/family-mruby-installer
+#      Settings -> Deploy keys -> Add deploy key
+#      Title: "release-installer (family-mruby CI)"
+#      Key:   contents of /tmp/installer_deploy_key.pub
+#      [x] Allow write access
 
-   ```json
-   {
-     "default": "0.2.0",
-     "versions": [
-       { "tag": "0.2.0", "released": "2026-mm-dd" },
-       { "tag": "0.1.0", "released": "2026-05-10" }
-     ]
-   }
-   ```
+# 3. Private key -> family-mruby/family-mruby
+#      Settings -> Secrets and variables -> Actions -> New repository secret
+#      Name:   INSTALLER_DEPLOY_KEY
+#      Secret: contents of /tmp/installer_deploy_key
 
-4. Commit and push:
+# 4. Delete the local copies once registered
+rm /tmp/installer_deploy_key /tmp/installer_deploy_key.pub
+```
 
-   ```bash
-   git add firmware/0.2.0 versions.json
-   git commit -m "Stage firmware 0.2.0"
-   git push
-   ```
+### Manual fallback (no CI)
 
-   GitHub Pages picks up `main` automatically.
+If you need to ship without CI (e.g. while debugging the workflow):
+
+```bash
+# Build firmwares locally in each sub-repo
+( cd fmruby-core           && rake clean_all && rake build:esp32 )
+( cd fmruby-graphics-audio && rake clean_all && rake build:esp32 )
+
+# Stage into this repo
+bash scripts/stage-firmware.sh 0.2.0
+
+# Update versions.json (top of array, set default)
+$EDITOR versions.json
+
+# Commit and push
+git add firmware/0.2.0 versions.json
+git commit -m "Stage firmware 0.2.0 (manual)"
+git push
+```
+
+`stage-firmware.sh` accepts `FMRUBY_CORE_BUILD` and `FMRUBY_GFX_BUILD` env vars to point at non-default build directories.
 
 ### Local preview
 
@@ -110,9 +127,10 @@ If a future build changes partition layout or storage size, regenerate `manifest
 
 ## Roadmap
 
-- **Tag-driven CI** — wire a workflow on the parent `family-mruby` repo so that pushing a release tag automatically builds both firmwares and pushes the staged version to this repo. Right now the `stage-firmware.sh` script is the manual equivalent of what that CI would do.
 - **Serial console** — optional Web Serial monitor (similar to [R2P2-ESP32-installer](https://github.com/kishima/R2P2-ESP32-installer)) for post-flash boot log inspection.
 
 ## License
 
-Same as the family-mruby project. Vendored ESP Web Tools is Apache-2.0 licensed by the Open Home Foundation.
+Apache License 2.0. See [LICENSE](LICENSE).
+
+The vendored copy of ESP Web Tools under `js/esp-web-tools/` is independently licensed under Apache-2.0 by the Open Home Foundation.
