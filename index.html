@@ -125,7 +125,7 @@ esp-web-install-button button[slot="activate"]:hover { background: var(--ruby-da
 <div class="container">
   <header>
     <h1>Family mruby Web Installer</h1>
-    <span class="subtitle">ブラウザから ESP32 にファームウェアを書き込みます</span>
+    <span class="subtitle">ブラウザから ESP32 にファームウェアを書き込むためのツールです</span>
   </header>
 
   <div class="unsupported" id="unsupported">
@@ -141,15 +141,16 @@ esp-web-install-button button[slot="activate"]:hover { background: var(--ruby-da
     <h3>はじめる前に</h3>
     <ul>
       <li>対応ブラウザ: Chrome / Edge / Opera (デスクトップ)</li>
+      <li>注（Chrome on Windows11で動作確認してます。他の環境は未確認）</li>
       <li>ESP32 デバイスを USB で接続してください</li>
-      <li>本体 (fmruby-core) と子マイコン (fmruby-graphics-audio) は別々のチップです。それぞれ対応するボタンから書き込んでください</li>
-      <li>初回書き込みではフラッシュ全消去が走ります</li>
+      <li>コア (fmruby-core) とサブ (fmruby-graphics-audio) は別々のチップです。それぞれ対応するボタンから書き込んでください</li>
+      <li>フラッシュのデータは上書きされるので、重要なデータは事前にバックアップしてください</li>
     </ul>
   </div>
 
   <div class="target">
     <h2>fmruby-core <span class="chip-tag">ESP32-S3</span></h2>
-    <p>本体マイコン。ユーザのアプリケーションが動作する側です。16MB Flash。</p>
+    <p>ESP32-S3 コアマイコン</p>
     <esp-web-install-button id="btn-core">
       <button slot="activate">Connect &amp; Flash fmruby-core</button>
     </esp-web-install-button>
@@ -157,7 +158,7 @@ esp-web-install-button button[slot="activate"]:hover { background: var(--ruby-da
 
   <div class="target">
     <h2>fmruby-graphics-audio <span class="chip-tag">ESP32 (WROVER)</span></h2>
-    <p>子マイコン。NTSC 映像出力と I2S 音声出力を担当します。本体とは UART で接続。8MB Flash。</p>
+    <p>ESP32-WROVER サブマイコン。NTSC 映像出力と I2S 音声出力を行う</p>
     <esp-web-install-button id="btn-gfx">
       <button slot="activate">Connect &amp; Flash fmruby-graphics-audio</button>
     </esp-web-install-button>
