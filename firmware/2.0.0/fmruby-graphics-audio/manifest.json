@@ -6,10 +6,22 @@
     {
       "chipFamily": "ESP32",
       "parts": [
-        { "path": "bootloader.bin",       "offset": 4096 },
-        { "path": "partition-table.bin",  "offset": 32768 },
-        { "path": "fmruby-graphics-audio.bin",           "offset": 65536 },
-        { "path": "storage.bin",          "offset": 2113536 }
+        {
+          "path": "bootloader.bin",
+          "offset": 4096
+        },
+        {
+          "path": "partition-table.bin",
+          "offset": 32768
+        },
+        {
+          "path": "fmruby-graphics-audio.bin",
+          "offset": 65536
+        },
+        {
+          "path": "storage.bin",
+          "offset": 2113536
+        }
       ]
     }
   ]
