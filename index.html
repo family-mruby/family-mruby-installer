@@ -73,7 +73,26 @@ header .subtitle { color: var(--text-mute); font-size: 14px; }
   border-radius: 8px;
   background: #fffafa;
 }
-.target h2 { color: var(--ruby-dark); font-size: 18px; margin-bottom: 6px; }
+/* Model group: one frame per hardware generation (Retro = two chips,
+   Modern = one), so the page reads as two products, not three chips. */
+.model-group {
+  margin-bottom: 28px;
+  padding: 16px 20px 8px;
+  border: 2px solid var(--ruby);
+  border-radius: 10px;
+}
+.model-group > h2 {
+  color: var(--ruby-dark);
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+.model-group > .model-desc {
+  color: var(--text-mute);
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+.model-group .target { margin-bottom: 16px; }
+.target h2, .target h3 { color: var(--ruby-dark); font-size: 18px; margin-bottom: 6px; }
 .target .chip-tag {
   display: inline-block;
   background: var(--ruby);
@@ -149,28 +168,38 @@ esp-web-install-button button[slot="activate"]:hover { background: var(--ruby-da
     </ul>
   </div>
 
-  <div class="target">
-    <h2>fmruby-core <span class="chip-tag">ESP32-S3</span></h2>
-    <p>ESP32-S3 コアマイコン</p>
-    <esp-web-install-button id="btn-core">
-      <button slot="activate">Connect &amp; Flash fmruby-core</button>
-    </esp-web-install-button>
+  <div class="model-group">
+    <h2>Family mruby Retro</h2>
+    <p class="model-desc">NARYA ボード (2 チップ構成)。両方のチップに書き込んでください</p>
+
+    <div class="target">
+      <h3>fmruby-core <span class="chip-tag">ESP32-S3</span></h3>
+      <p>ESP32-S3 コアマイコン</p>
+      <esp-web-install-button id="btn-core">
+        <button slot="activate">Connect &amp; Flash fmruby-core</button>
+      </esp-web-install-button>
+    </div>
+
+    <div class="target">
+      <h3>fmruby-graphics-audio <span class="chip-tag">ESP32 (WROVER)</span></h3>
+      <p>ESP32-WROVER サブマイコン。NTSC 映像出力と I2S 音声出力を行う</p>
+      <esp-web-install-button id="btn-gfx">
+        <button slot="activate">Connect &amp; Flash fmruby-graphics-audio</button>
+      </esp-web-install-button>
+    </div>
   </div>
 
-  <div class="target">
-    <h2>fmruby-graphics-audio <span class="chip-tag">ESP32 (WROVER)</span></h2>
-    <p>ESP32-WROVER サブマイコン。NTSC 映像出力と I2S 音声出力を行う</p>
-    <esp-web-install-button id="btn-gfx">
-      <button slot="activate">Connect &amp; Flash fmruby-graphics-audio</button>
-    </esp-web-install-button>
-  </div>
+  <div class="model-group" id="target-tab5">
+    <h2>Family mruby Modern</h2>
+    <p class="model-desc">M5Stack Tab5 (1 チップ構成)。USB-C ケーブルで接続して書き込む</p>
 
-  <div class="target" id="target-tab5">
-    <h2>Family mruby Modern <span class="chip-tag">ESP32-P4 (M5Stack Tab5)</span></h2>
-    <p>M5Stack Tab5 単体で動く Modern 版。USB-C ケーブルで接続して書き込む</p>
-    <esp-web-install-button id="btn-tab5">
-      <button slot="activate">Connect &amp; Flash Tab5 firmware</button>
-    </esp-web-install-button>
+    <div class="target">
+      <h3>fmruby-core-tab5 <span class="chip-tag">ESP32-P4 (M5Stack Tab5)</span></h3>
+      <p>Tab5 単体で動く Modern 版ファームウェア</p>
+      <esp-web-install-button id="btn-tab5">
+        <button slot="activate">Connect &amp; Flash Tab5 firmware</button>
+      </esp-web-install-button>
+    </div>
   </div>
 
   <div class="footer">
