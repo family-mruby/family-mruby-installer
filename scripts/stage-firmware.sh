@@ -31,46 +31,54 @@ if [[ ! -d "$GFX_BUILD" ]]; then
   exit 1
 fi
 
-# stage <target> <build_dir> <chipFamily> <bootloader_offset> <storage_offset> <app_bin_name>
+# stage <target> <build_dir> <chipFamily>
+#
+# Files and offsets come from the build's own flasher_args.json, never from
+# constants here: a hardcoded storage offset (0x210000, from the 2MB-factory
+# era) outlived two partition-table growths and bricked S3 installs when
+# storage landed inside the 4MB factory app. The build is the single source
+# of truth for the flash layout.
 stage() {
-  local target="$1" build_dir="$2" chip="$3" boot_off="$4" stor_off="$5" app_bin="$6"
+  local target="$1" build_dir="$2" chip="$3"
   local dest="${ROOT}/firmware/${VER}/${target}"
+  local fa="${build_dir}/flasher_args.json"
+
+  if [[ ! -f "$fa" ]]; then
+    echo "flasher_args.json not found in ${build_dir}" >&2
+    exit 1
+  fi
 
   mkdir -p "$dest"
-  cp "${build_dir}/bootloader/bootloader.bin"           "$dest/"
-  cp "${build_dir}/partition_table/partition-table.bin" "$dest/"
-  cp "${build_dir}/${app_bin}"                          "$dest/"
-  cp "${build_dir}/storage.bin"                         "$dest/"
-
-  cat > "${dest}/manifest.json" <<EOF
-{
-  "name": "${target}",
-  "version": "${VER}",
-  "new_install_prompt_erase": true,
-  "builds": [
-    {
-      "chipFamily": "${chip}",
-      "parts": [
-        { "path": "bootloader.bin",       "offset": ${boot_off} },
-        { "path": "partition-table.bin",  "offset": 32768 },
-        { "path": "${app_bin}",           "offset": 65536 },
-        { "path": "storage.bin",          "offset": ${stor_off} }
-      ]
-    }
-  ]
+  python3 - "$fa" "$build_dir" "$dest" "$target" "$VER" "$chip" <<'PY'
+import json, shutil, sys
+fa_path, build_dir, dest, target, ver, chip = sys.argv[1:7]
+files = json.load(open(fa_path))["flash_files"]
+parts = []
+for off, rel in sorted(files.items(), key=lambda kv: int(kv[0], 16)):
+    name = rel.split("/")[-1]
+    shutil.copy(f"{build_dir}/{rel}", f"{dest}/{name}")
+    parts.append({"path": name, "offset": int(off, 16)})
+manifest = {
+    "name": target,
+    "version": ver,
+    "new_install_prompt_erase": True,
+    "builds": [{"chipFamily": chip, "parts": parts}],
 }
-EOF
+with open(f"{dest}/manifest.json", "w") as f:
+    json.dump(manifest, f, indent=2)
+    f.write("\n")
+PY
   echo "Staged ${target} v${VER} -> firmware/${VER}/${target}/"
 }
 
-stage "fmruby-core"           "$CORE_BUILD" "ESP32-S3" 0    2162688 "fmruby-core.bin"
-stage "fmruby-graphics-audio" "$GFX_BUILD"  "ESP32"    4096 2113536 "fmruby-graphics-audio.bin"
+stage "fmruby-core"           "$CORE_BUILD" "ESP32-S3"
+stage "fmruby-graphics-audio" "$GFX_BUILD"  "ESP32"
 
 # Modern (M5Stack Tab5, ESP32-P4): single-chip firmware, staged only when the
 # caller provides a Tab5 build dir (releases before 2.0.0 have none).
 TAB5_BUILD="${FMRUBY_CORE_TAB5_BUILD:-}"
 if [[ -n "$TAB5_BUILD" && -d "$TAB5_BUILD" ]]; then
-  stage "fmruby-core-tab5" "$TAB5_BUILD" "ESP32-P4" 8192 6356992 "fmruby-core.bin"
+  stage "fmruby-core-tab5" "$TAB5_BUILD" "ESP32-P4"
 fi
 
 echo
