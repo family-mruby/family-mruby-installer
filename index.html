@@ -162,15 +162,15 @@ esp-web-install-button button[slot="activate"]:hover { background: var(--ruby-da
       <li>対応ブラウザ: Chrome / Edge / Opera (デスクトップ)</li>
       <li>注（Chrome on Windows11で動作確認してます。他の環境は未確認）</li>
       <li>ESP32 デバイスを USB で接続してください</li>
-      <li>Retro (NARYA ボード) はコア (fmruby-core) とサブ (fmruby-graphics-audio) の 2 チップ構成です。それぞれ対応するボタンから書き込んでください</li>
-      <li>Modern (M5Stack Tab5) は 1 チップ構成です。Tab5 のボタンだけ書き込めば動きます</li>
+      <li>Retro (Narya v3ボード) はコア (fmruby-core) とサブ (fmruby-graphics-audio) の 2 チップ構成です。それぞれ対応するボタンから書き込んでください</li>
+      <li>Modern (M5Stack Tab5, Narya v4ボード(開発中)) は 1 チップ構成です。Tab5 のボタンだけ書き込めば動きます</li>
       <li>フラッシュのデータは上書きされるので、重要なデータは事前にバックアップしてください</li>
     </ul>
   </div>
 
   <div class="model-group">
     <h2>Family mruby Retro</h2>
-    <p class="model-desc">NARYA ボード (2 チップ構成)。両方のチップに書き込んでください</p>
+    <p class="model-desc">Narya v3 ボード (2 チップ構成)。両方のチップに書き込んでください</p>
 
     <div class="target">
       <h3>fmruby-core <span class="chip-tag">ESP32-S3</span></h3>
@@ -191,11 +191,11 @@ esp-web-install-button button[slot="activate"]:hover { background: var(--ruby-da
 
   <div class="model-group" id="target-tab5">
     <h2>Family mruby Modern</h2>
-    <p class="model-desc">M5Stack Tab5 (1 チップ構成)。USB-C ケーブルで接続して書き込む</p>
+    <p class="model-desc">ESP32-P4(1 チップ構成)。USB-C ケーブルで接続して書き込む</p>
 
     <div class="target">
       <h3>fmruby-core-tab5 <span class="chip-tag">ESP32-P4 (M5Stack Tab5)</span></h3>
-      <p>Tab5 単体で動く Modern 版ファームウェア</p>
+      <p>M5Stack Tab5向けファームウェア</p>
       <esp-web-install-button id="btn-tab5">
         <button slot="activate">Connect &amp; Flash Tab5 firmware</button>
       </esp-web-install-button>
