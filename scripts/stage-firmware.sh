@@ -66,6 +66,13 @@ EOF
 stage "fmruby-core"           "$CORE_BUILD" "ESP32-S3" 0    2162688 "fmruby-core.bin"
 stage "fmruby-graphics-audio" "$GFX_BUILD"  "ESP32"    4096 2113536 "fmruby-graphics-audio.bin"
 
+# Modern (M5Stack Tab5, ESP32-P4): single-chip firmware, staged only when the
+# caller provides a Tab5 build dir (releases before 2.0.0 have none).
+TAB5_BUILD="${FMRUBY_CORE_TAB5_BUILD:-}"
+if [[ -n "$TAB5_BUILD" && -d "$TAB5_BUILD" ]]; then
+  stage "fmruby-core-tab5" "$TAB5_BUILD" "ESP32-P4" 8192 6356992 "fmruby-core.bin"
+fi
+
 echo
 echo "Done. Next steps:"
 echo "  1. Edit versions.json and add: { \"tag\": \"${VER}\", \"released\": \"$(date +%Y-%m-%d)\" }"

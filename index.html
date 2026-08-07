@@ -143,7 +143,8 @@ esp-web-install-button button[slot="activate"]:hover { background: var(--ruby-da
       <li>対応ブラウザ: Chrome / Edge / Opera (デスクトップ)</li>
       <li>注（Chrome on Windows11で動作確認してます。他の環境は未確認）</li>
       <li>ESP32 デバイスを USB で接続してください</li>
-      <li>コア (fmruby-core) とサブ (fmruby-graphics-audio) は別々のチップです。それぞれ対応するボタンから書き込んでください</li>
+      <li>Retro (NARYA ボード) はコア (fmruby-core) とサブ (fmruby-graphics-audio) の 2 チップ構成です。それぞれ対応するボタンから書き込んでください</li>
+      <li>Modern (M5Stack Tab5) は 1 チップ構成です。Tab5 のボタンだけ書き込めば動きます</li>
       <li>フラッシュのデータは上書きされるので、重要なデータは事前にバックアップしてください</li>
     </ul>
   </div>
@@ -164,6 +165,14 @@ esp-web-install-button button[slot="activate"]:hover { background: var(--ruby-da
     </esp-web-install-button>
   </div>
 
+  <div class="target" id="target-tab5">
+    <h2>Family mruby Modern <span class="chip-tag">ESP32-P4 (M5Stack Tab5)</span></h2>
+    <p>M5Stack Tab5 単体で動く Modern 版。USB-C ケーブルで接続して書き込む</p>
+    <esp-web-install-button id="btn-tab5">
+      <button slot="activate">Connect &amp; Flash Tab5 firmware</button>
+    </esp-web-install-button>
+  </div>
+
   <div class="footer">
     <p>Powered by <a href="https://esphome.github.io/esp-web-tools/" target="_blank" rel="noopener">ESP Web Tools</a></p>
     <p>Source: <a href="https://github.com/family-mruby/family-mruby-installer" target="_blank" rel="noopener">family-mruby/family-mruby-installer</a></p>
@@ -174,6 +183,8 @@ esp-web-install-button button[slot="activate"]:hover { background: var(--ruby-da
   const sel     = document.getElementById('version');
   const btnCore = document.getElementById('btn-core');
   const btnGfx  = document.getElementById('btn-gfx');
+  const btnTab5 = document.getElementById('btn-tab5');
+  const tab5Box = document.getElementById('target-tab5');
   const unsup   = document.getElementById('unsupported');
 
   if (!('serial' in navigator)) {
@@ -183,6 +194,11 @@ esp-web-install-button button[slot="activate"]:hover { background: var(--ruby-da
   function setManifests(ver) {
     btnCore.setAttribute('manifest', `firmware/${ver}/fmruby-core/manifest.json`);
     btnGfx .setAttribute('manifest', `firmware/${ver}/fmruby-graphics-audio/manifest.json`);
+    btnTab5.setAttribute('manifest', `firmware/${ver}/fmruby-core-tab5/manifest.json`);
+    // Releases before 2.0.0 have no Tab5 firmware; hide the section then.
+    fetch(`firmware/${ver}/fmruby-core-tab5/manifest.json`, { method: 'HEAD', cache: 'no-store' })
+      .then(r => { tab5Box.style.display = r.ok ? '' : 'none'; })
+      .catch(() => { tab5Box.style.display = 'none'; });
   }
 
   fetch('versions.json', { cache: 'no-store' })
