@@ -82,6 +82,17 @@ header .subtitle { color: var(--text-mute); font-size: 14px; }
 }
 .info-box h3 { color: var(--ruby-dark); margin-bottom: 8px; font-size: 15px; }
 .info-box ul { margin-left: 20px; color: var(--text-mute); font-size: 14px; line-height: 1.6; }
+/* Security note: the firmware ships unauthenticated WiFi / BLE services, so the
+   warning has to be visible before the user flashes, not buried in a README. */
+.security-note {
+  background: #fdf3e3;
+  border-left: 4px solid #b8860b;
+  padding: 14px 16px;
+  margin-bottom: 28px;
+  border-radius: 4px;
+}
+.security-note h3 { color: #7a5600; margin-bottom: 8px; font-size: 15px; }
+.security-note ul { margin-left: 20px; color: #6b4f16; font-size: 14px; line-height: 1.6; }
 .target {
   margin-bottom: 28px;
   padding: 20px;
@@ -189,6 +200,16 @@ esp-web-install-button button[slot="activate"]:hover { background: var(--ruby-da
     </ul>
   </div>
 
+  <div class="security-note">
+    <h3 data-i18n="secTitle">Security: no access control on WiFi / BLE</h3>
+    <ul>
+      <li data-i18n="secRd">The remote desktop (HTTP / WebSocket) is unauthenticated. Anyone on the same network can view the screen and send keyboard / mouse input</li>
+      <li data-i18n="secBle">The BLE debug service uses no pairing or encryption. Anyone in radio range can inspect running applications and start or stop them</li>
+      <li data-i18n="secWifi">WiFi credentials are stored in plain text on the device</li>
+      <li data-i18n="secUse">Use this firmware only on a network you trust, at your own risk, and never expose the device directly to the Internet</li>
+    </ul>
+  </div>
+
   <div class="model-group">
     <h2>Family mruby Retro</h2>
     <p class="model-desc" data-i18n="retroDesc">Narya v3 board (two chips). Flash both of them</p>
@@ -248,6 +269,11 @@ esp-web-install-button button[slot="activate"]:hover { background: var(--ruby-da
       liModern: 'Modern (M5Stack Tab5, Narya v4 ボード (開発中)) は 1 チップ構成です。Tab5 のボタンだけ書き込めば動きます',
       liTab5Panel: 'Tab5 は ILI9881C パネルと GT911 タッチの世代のみ対応しています。新しい ST7123 の個体は動きません',
       liBackup: 'フラッシュのデータは上書きされるので、重要なデータは事前にバックアップしてください',
+      secTitle: 'セキュリティ: WiFi / BLE にアクセス制限はありません',
+      secRd: 'リモートデスクトップ (HTTP / WebSocket) は認証がありません。同じネットワーク上の誰からでも画面の閲覧とキーボード・マウス操作ができます',
+      secBle: 'BLE のデバッグ機能はペアリングも暗号化も行いません。電波の届く範囲から接続して、動作中のアプリケーションの閲覧や起動・停止ができます',
+      secWifi: 'WiFi の接続情報は端末上に平文で保存されます',
+      secUse: '信頼できる環境でのみ、自己責任でご利用ください。インターネットに直接公開しないでください',
       retroDesc: 'Narya v3 ボード (2 チップ構成)。両方のチップに書き込んでください',
       coreDesc: 'ESP32-S3 コアマイコン',
       gfxDesc: 'ESP32-WROVER サブマイコン。NTSC 映像出力と I2S 音声出力を行う',

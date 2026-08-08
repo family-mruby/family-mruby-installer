@@ -19,6 +19,12 @@ Built on top of [ESP Web Tools](https://esphome.github.io/esp-web-tools/).
 4. Click the appropriate **Connect & Flash** button (`fmruby-core` for the main MCU, `fmruby-graphics-audio` for the co-processor).
 5. Select the serial port in the browser dialog and let the installer run. The `chipFamily` is checked against the connected chip — if you connect the wrong target it will refuse to flash.
 
+**Security note:** the firmware's networking features have no access control. The remote
+desktop (HTTP / WebSocket) is unauthenticated — anyone on the same network can view the
+screen and send keyboard / mouse input — and the BLE debug service uses no pairing or
+encryption. WiFi credentials are stored in plain text on the device. Use it only on a
+network you trust, at your own risk, and never expose the device directly to the Internet.
+
 ## Layout
 
 ```
