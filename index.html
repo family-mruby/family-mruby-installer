@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,6 +39,22 @@ body {
 header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; margin-bottom: 8px; }
 header h1 { color: var(--ruby-dark); font-size: 26px; }
 header .subtitle { color: var(--text-mute); font-size: 14px; }
+.lang-switch { margin-left: auto; display: flex; gap: 4px; }
+.lang-switch button {
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text-mute);
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.lang-switch button:hover { border-color: var(--ruby); color: var(--ruby); }
+.lang-switch button[aria-pressed="true"] {
+  background: var(--ruby);
+  border-color: var(--ruby);
+  color: #fff;
+}
 .version-row {
   display: flex; align-items: center; gap: 10px;
   margin: 18px 0 24px;
@@ -144,37 +160,42 @@ esp-web-install-button button[slot="activate"]:hover { background: var(--ruby-da
 <div class="container">
   <header>
     <h1>Family mruby Web Installer</h1>
-    <span class="subtitle">ブラウザから ESP32 にファームウェアを書き込むためのツールです</span>
+    <span class="subtitle" data-i18n="subtitle">Flash Family mruby firmware to your board from the browser</span>
+    <div class="lang-switch">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button>
+      <button type="button" data-lang="ja" aria-pressed="false">日本語</button>
+    </div>
   </header>
 
-  <div class="unsupported" id="unsupported">
-    Web Serial API が利用できません。Chrome / Edge / Opera で開いてください（Firefox / Safari は未対応）。
+  <div class="unsupported" id="unsupported" data-i18n="unsupported">
+    The Web Serial API is not available. Open this page in Chrome, Edge or Opera (Firefox and Safari are not supported).
   </div>
 
   <div class="version-row">
-    <label for="version">バージョン:</label>
+    <label for="version" data-i18n="versionLabel">Version:</label>
     <select id="version" aria-label="firmware version"></select>
   </div>
 
   <div class="info-box">
-    <h3>はじめる前に</h3>
+    <h3 data-i18n="beforeTitle">Before you start</h3>
     <ul>
-      <li>対応ブラウザ: Chrome / Edge / Opera (デスクトップ)</li>
-      <li>注（Chrome on Windows11で動作確認してます。他の環境は未確認）</li>
-      <li>ESP32 デバイスを USB で接続してください</li>
-      <li>Retro (Narya v3ボード) はコア (fmruby-core) とサブ (fmruby-graphics-audio) の 2 チップ構成です。それぞれ対応するボタンから書き込んでください</li>
-      <li>Modern (M5Stack Tab5, Narya v4ボード(開発中)) は 1 チップ構成です。Tab5 のボタンだけ書き込めば動きます</li>
-      <li>フラッシュのデータは上書きされるので、重要なデータは事前にバックアップしてください</li>
+      <li data-i18n="liBrowser">Supported browsers: Chrome / Edge / Opera (desktop)</li>
+      <li data-i18n="liTested">Tested with Chrome on Windows 11. Other environments are unverified</li>
+      <li data-i18n="liUsb">Connect the device over USB</li>
+      <li data-i18n="liRetro">Retro (Narya v3 board) has two chips: the core (fmruby-core) and the sub (fmruby-graphics-audio). Flash each one from its own button</li>
+      <li data-i18n="liModern">Modern (M5Stack Tab5, Narya v4 board in development) has one chip. The Tab5 button is all you need</li>
+      <li data-i18n="liTab5Panel">Tab5: only units with the ILI9881C panel and GT911 touch are supported. The newer ST7123 units are not</li>
+      <li data-i18n="liBackup">Flashing overwrites the data in flash. Back up anything you need first</li>
     </ul>
   </div>
 
   <div class="model-group">
     <h2>Family mruby Retro</h2>
-    <p class="model-desc">Narya v3 ボード (2 チップ構成)。両方のチップに書き込んでください</p>
+    <p class="model-desc" data-i18n="retroDesc">Narya v3 board (two chips). Flash both of them</p>
 
     <div class="target">
       <h3>fmruby-core <span class="chip-tag">ESP32-S3</span></h3>
-      <p>ESP32-S3 コアマイコン</p>
+      <p data-i18n="coreDesc">ESP32-S3 core microcontroller</p>
       <esp-web-install-button id="btn-core">
         <button slot="activate">Connect &amp; Flash fmruby-core</button>
       </esp-web-install-button>
@@ -182,7 +203,7 @@ esp-web-install-button button[slot="activate"]:hover { background: var(--ruby-da
 
     <div class="target">
       <h3>fmruby-graphics-audio <span class="chip-tag">ESP32 (WROVER)</span></h3>
-      <p>ESP32-WROVER サブマイコン。NTSC 映像出力と I2S 音声出力を行う</p>
+      <p data-i18n="gfxDesc">ESP32-WROVER sub microcontroller. NTSC video output and I2S audio output</p>
       <esp-web-install-button id="btn-gfx">
         <button slot="activate">Connect &amp; Flash fmruby-graphics-audio</button>
       </esp-web-install-button>
@@ -191,11 +212,11 @@ esp-web-install-button button[slot="activate"]:hover { background: var(--ruby-da
 
   <div class="model-group" id="target-tab5">
     <h2>Family mruby Modern</h2>
-    <p class="model-desc">ESP32-P4(1 チップ構成)。USB-C ケーブルで接続して書き込む</p>
+    <p class="model-desc" data-i18n="modernDesc">ESP32-P4 (single chip). Connect it with a USB-C cable</p>
 
     <div class="target">
       <h3>fmruby-core-tab5 <span class="chip-tag">ESP32-P4 (M5Stack Tab5)</span></h3>
-      <p>M5Stack Tab5向けファームウェア</p>
+      <p data-i18n="tab5Desc">Firmware for the M5Stack Tab5</p>
       <esp-web-install-button id="btn-tab5">
         <button slot="activate">Connect &amp; Flash Tab5 firmware</button>
       </esp-web-install-button>
@@ -209,6 +230,57 @@ esp-web-install-button button[slot="activate"]:hover { background: var(--ruby-da
 </div>
 
 <script>
+  // Language. English is what the page ships with (the markup holds the
+  // English text), Japanese comes from the table below. The choice is
+  // remembered; the browser's own language setting is deliberately ignored so
+  // that a shared link always opens the same way.
+  const LANG_KEY = 'fmrb-installer-lang';
+  const I18N = {
+    ja: {
+      subtitle: 'ブラウザから ESP32 にファームウェアを書き込むためのツールです',
+      unsupported: 'Web Serial API が利用できません。Chrome / Edge / Opera で開いてください (Firefox / Safari は未対応)。',
+      versionLabel: 'バージョン:',
+      beforeTitle: 'はじめる前に',
+      liBrowser: '対応ブラウザ: Chrome / Edge / Opera (デスクトップ)',
+      liTested: 'Chrome on Windows 11 で動作確認しています。他の環境は未確認です',
+      liUsb: 'デバイスを USB で接続してください',
+      liRetro: 'Retro (Narya v3 ボード) はコア (fmruby-core) とサブ (fmruby-graphics-audio) の 2 チップ構成です。それぞれ対応するボタンから書き込んでください',
+      liModern: 'Modern (M5Stack Tab5, Narya v4 ボード (開発中)) は 1 チップ構成です。Tab5 のボタンだけ書き込めば動きます',
+      liTab5Panel: 'Tab5 は ILI9881C パネルと GT911 タッチの世代のみ対応しています。新しい ST7123 の個体は動きません',
+      liBackup: 'フラッシュのデータは上書きされるので、重要なデータは事前にバックアップしてください',
+      retroDesc: 'Narya v3 ボード (2 チップ構成)。両方のチップに書き込んでください',
+      coreDesc: 'ESP32-S3 コアマイコン',
+      gfxDesc: 'ESP32-WROVER サブマイコン。NTSC 映像出力と I2S 音声出力を行う',
+      modernDesc: 'ESP32-P4 (1 チップ構成)。USB-C ケーブルで接続して書き込む',
+      tab5Desc: 'M5Stack Tab5 向けファームウェア'
+    }
+  };
+
+  const langButtons = document.querySelectorAll('.lang-switch button');
+  // The English text is read out of the markup once, so it needs no table.
+  const EN = {};
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    EN[el.dataset.i18n] = el.textContent.trim();
+  });
+
+  function applyLang(lang) {
+    const table = (lang === 'ja') ? I18N.ja : EN;
+    document.documentElement.lang = (lang === 'ja') ? 'ja' : 'en';
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const text = table[el.dataset.i18n];
+      if (text) { el.textContent = text; }
+    });
+    langButtons.forEach(b => {
+      b.setAttribute('aria-pressed', String(b.dataset.lang === document.documentElement.lang));
+    });
+    try { localStorage.setItem(LANG_KEY, document.documentElement.lang); } catch (e) { /* private mode */ }
+  }
+
+  let savedLang = null;
+  try { savedLang = localStorage.getItem(LANG_KEY); } catch (e) { /* private mode */ }
+  applyLang(savedLang === 'ja' ? 'ja' : 'en');
+  langButtons.forEach(b => b.addEventListener('click', () => applyLang(b.dataset.lang)));
+
   const sel     = document.getElementById('version');
   const btnCore = document.getElementById('btn-core');
   const btnGfx  = document.getElementById('btn-gfx');
